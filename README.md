@@ -1,42 +1,61 @@
 # SecureChannel
 
-ENCS4320 Applied Cryptography final project. A secure communication app
-built from scratch in Python, implementing the underlying primitives
-directly from their RFC/FIPS specifications, then composing them into
-an authenticated key-exchange handshake and an AEAD messaging channel.
+ENCS4320 Applied Cryptography final project — Birzeit University.
+
+A complete secure communication system built from scratch in Python, implementing all cryptographic primitives directly from their RFC/FIPS specifications.
 
 ## Team
 
-- Bakr [last name] - [ID]
-- [Teammate name] - [ID]
+- Bakr Adnan
+- Jalila Rasmi
 
-## Status
+## Primitives Implemented
 
-In progress. Implemented so far:
+| Component | Specification |
+|---|---|
+| SHA-256 | FIPS 180-4 |
+| HMAC-SHA-256 | RFC 2104 |
+| HKDF extract + expand | RFC 5869 |
+| ChaCha20 stream cipher | RFC 8439 |
+| Poly1305 MAC | RFC 8439 |
+| ChaCha20-Poly1305 AEAD | RFC 8439 §2.8 |
+| X25519 key exchange | RFC 7748 |
 
-- SHA-256 (FIPS 180-4)
-- HMAC-SHA-256 (RFC 2104)
-- HKDF extract/expand (RFC 5869)
+No cryptographic libraries are used inside `src/`. All primitives are implemented in pure Python from their specifications.
 
-Not yet implemented: ChaCha20, Poly1305, ChaCha20-Poly1305 AEAD (RFC 8439),
-X25519 (RFC 7748), the handshake protocol, and the CLI chat application.
+## Running the Application
 
-## Running the tests
+**Step 1 — Generate a pre-shared key (do this once, copy psk.bin to both machines):**
+```
+python generate_psk.py
+```
 
-From the repository root:
+**Step 2 — Start the server:**
+```
+python server.py
+```
+
+**Step 3 — Start the client (in another terminal):**
+```
+python client.py
+```
+
+Type messages and press Enter to send. Type `/quit` to close the connection.
+
+## Running the Tests
 
 ```
-python3 tests/test_sha256.py
-python3 tests/test_hmac.py
-python3 tests/test_hkdf.py
+python tests/test_sha256.py
+python tests/test_hmac.py
+python tests/test_hkdf.py
+python tests/test_chacha20.py
+python tests/test_poly1305.py
+python tests/test_aead.py
+python tests/test_x25519.py
 ```
 
-Each test file validates the corresponding primitive against official
-test vectors published in its RFC/FIPS document (FIPS 180-4 Appendix B
-for SHA-256, RFC 4231 for HMAC-SHA-256, RFC 5869 Appendix A for HKDF).
+Each test file validates against the official test vectors from its RFC/FIPS document.
 
-## No external crypto libraries
+## Protocol Design
 
-None of the files under `src/` import any cryptographic library. They
-are implemented from the specification using only Python's standard
-library for basic operations (integer arithmetic, byte manipulation).
+See `REPORT.md` for full details on the handshake, key schedule, nonce construction, and replay protection.
